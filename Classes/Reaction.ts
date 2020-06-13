@@ -11,7 +11,6 @@ export class Reaction {
 
 	constructor(guild: Guild, data: any) {
 		const keys = Object.keys(data);
-		console.log(guild.members.size);
 
 		for (let i = 0; i < keys.length; i++) {
 			switch (keys[i]) {
