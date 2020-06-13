@@ -1,36 +1,181 @@
+import ClientOptions from "./@types/ClientOptions.ts";
+import Collection from "./Classes/Collection.ts";
+import EventHandler from "./handlers/_loader.ts";
+import GatewayPayload from "./@types/GatewayPayload.ts";
+import Guild, { UnavailableGuild } from "./Classes/Guild.ts";
+import Metrics from "./Classes/Metrics.ts";
+import RequestHandler from "./Classes/RequestHandler.ts";
+import User from "./Classes/User.ts";
 import { DISCORD_GATEWAY_URL } from "./constants.ts";
+
 import {
 	connectWebSocket,
 	isWebSocketCloseEvent,
-	isWebSocketPingEvent,
-	isWebSocketPongEvent,
-	WebSocket
+	WebSocket,
+	WebSocketCloseEvent
 } from "https://deno.land/std/ws/mod.ts";
-import EventEmitter from "https://deno.land/x/event_emitter/mod.ts";
-import { blue, green, red, yellow } from "https://deno.land/std/fmt/colors.ts";
-
-interface ClientOptions {
-	/**
-	 * Discord Bot token
-	 */
-	token: string;
-	/**
-	 * Wherever to log internal issues
-	 */
-	debug: boolean;
-}
+import * as colors from "https://deno.land/std/fmt/colors.ts";
+import EventEmitter from "https://deno.land/x/events/mod.ts";
+import { process } from "https://deno.land/std/node/process.ts";
 
 export default class Client extends EventEmitter {
-	private ws: WebSocket | null = null;
-	private options: ClientOptions;
+	ws: WebSocket | null = null;
+	unavailableGuilds: UnavailableGuild[] = [];
+	sessionId: string | null = null;
+	options: ClientOptions;
+	guilds: Collection<string, Guild> = new Collection();
+	metrics: Metrics = new Metrics();
+	ready = false;
+	user: User | null = null;
+	requesthandler = new RequestHandler(this);
+	private interval?: number;
+	private seq: number = 0;
+	private lastHeartbeat: number = -1;
+	private lastHeartbeatAck: number = -1;
+	private eventHandler = new EventHandler(this);
+	private connected = false;
 
 	constructor(options: ClientOptions) {
 		super();
-
 		this.options = options;
 	}
 
+	async request(path: string, method: string, body: any = null): Promise<any> {
+		// @ts-ignore
+		return this.requesthandler.request(method, path, body);
+	}
+
 	async login() {
-		this.ws = await connectWebSocket(DISCORD_GATEWAY_URL);
+		return new Promise(async (resolve, reject) => {
+			const now = Date.now();
+
+			//* Load all events
+			await this.eventHandler.load();
+
+			this.ws = await connectWebSocket(DISCORD_GATEWAY_URL);
+			for await (const message of this.ws) {
+				if (typeof message === "string") {
+					if (!this.connected) {
+						const difference = Date.now() - now;
+						this.debugLog(
+							colors.green(
+								`WS connected (${
+									difference < 500
+										? difference
+										: difference < 1000
+										? colors.yellow(difference.toString())
+										: colors.red(difference.toString())
+								}ms)!`
+							)
+						);
+						resolve();
+						this.connected = true;
+					}
+
+					await this.handle(JSON.parse(message));
+				} else if (isWebSocketCloseEvent(message)) {
+					this.ready = false;
+					this.connected = false;
+					this.debugLog(
+						colors.red(message.code.toString() + (message.reason || "N/A"))
+					);
+					if (!this.sessionId)
+						reject("Server closed connection before client was ready!");
+					else
+						reject(
+							`Server closed connection unexpectedly (${message.code}, ${
+								message.reason || "N/A"
+							})`
+						);
+				}
+			}
+		});
+	}
+
+	private debugLog(...message: string[]) {
+		if (this.options.debug)
+			console.log(
+				colors.white(colors.bold("FluffCord")),
+				colors.cyan("-"),
+				message.join(" ")
+			);
+	}
+
+	private heartbeat() {
+		this.lastHeartbeat = Date.now();
+		this.ws?.send(
+			JSON.stringify({
+				op: 1,
+				d: this.seq ? this.seq : null
+			} as GatewayPayload)
+		);
+	}
+
+	private identify() {
+		this.ws?.send(
+			JSON.stringify({
+				op: 2,
+				d: {
+					token: this.options.token,
+					properties: {
+						$os: process.platform,
+						$browser: "FluffCord",
+						$device: "FluffCord"
+					}
+				}
+			} as GatewayPayload)
+		);
+	}
+
+	private async handle(payload: GatewayPayload) {
+		switch (payload.op) {
+			//* Dispatch
+			case 0: {
+				this.emit("raw", payload);
+				await this.eventHandler.dispatch(payload);
+				break;
+			}
+			//* Hello
+			case 10: {
+				this.debugLog(
+					colors.magenta(`Heartbeating at ${payload.d.heartbeat_interval}ms!`)
+				);
+				this.heartbeat();
+				this.identify();
+				this.interval = setInterval(
+					this.heartbeat.bind(this),
+					payload.d.heartbeat_interval
+				);
+				break;
+			}
+			//* Heartbeat ACK
+			case 11: {
+				this.lastHeartbeatAck = Date.now();
+
+				const difference = this.lastHeartbeatAck - this.lastHeartbeat;
+				this.debugLog(
+					colors.magenta(
+						`Received a heartbeat ACK, which took ${
+							difference < 500
+								? colors.green(difference.toString())
+								: difference < 1000
+								? colors.yellow(difference.toString())
+								: colors.red(difference.toString())
+						}ms!`
+					)
+				);
+				break;
+			}
+		}
+	}
+
+	private handleDisconnect(message: WebSocketCloseEvent) {
+		this.debugLog(
+			colors.red(message.code.toString() + (message.reason || "N/A"))
+		);
+	}
+
+	get ping() {
+		return this.lastHeartbeatAck - this.lastHeartbeat;
 	}
 }
