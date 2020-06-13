@@ -1,35 +1,43 @@
-import Client from "../Client.ts";
-import Guild from "./Guild.ts";
-import GuildMember from "./GuildMember.ts";
-import TextChannel from "./TextChannel.ts";
-import User from "./User.ts";
-import Reaction from "./Reaction.ts";
-import Collection from "./Collection.ts";
+import {
+	Client,
+	Collection,
+	Reaction,
+	GuildMember,
+	Guild,
+	User,
+	TextChannel
+} from "../mod.ts";
 
-export default class Message {
+export class Message {
+	//@ts-ignore
 	private client: Client;
-	id: string;
-	channel: TextChannel | TextChannel;
+	id = "";
+	//@ts-ignore
+	channel: TextChannel;
+	//@ts-ignore
 	guild: Guild;
+	//@ts-ignore
 	author: User;
+	//@ts-ignore
 	member: GuildMember;
-	content: string;
-	timestamp: number;
-	edited_timestamp: number;
-	tts: boolean;
-	mentions_everyone: boolean;
-	mentions: User[];
-	mention_roles: any;
-	attachments: any;
-	embeds: any;
+	content = "";
+	timestamp = Date.now();
+	edited_timestamp = Date.now();
+	tts = false;
+	mentions_everyone = false;
+	//TODO Make this a Collection
+	mentions: User[] = [];
+	mention_roles: any = null;
+	attachments: any = null;
+	embeds: any = null;
 	reactions: Collection<string, Reaction> = new Collection();
-	nonce: number | string;
-	pinned: boolean;
-	webhook_id: string;
-	activity: any;
-	application: any;
-	message_reference: any;
-	flags: number;
+	nonce: number | string = 0;
+	pinned = false;
+	webhook_id = "";
+	activity: any = null;
+	application: any = null;
+	message_reference: any = null;
+	flags = 0;
 
 	constructor(client: Client, data: any) {
 		this.client = client;
@@ -46,7 +54,7 @@ export default class Message {
 					for (let i = 0; i < data.reactions.length; i++) {
 						this.reactions.set(
 							data.reactions[i].emoji.id || data.reactions[i].emoji.name!,
-							new Reaction(this.guild, data.reactions[i])
+							new Reaction(client.guilds.get(data.guild_id)!, data.reactions[i])
 						);
 					}
 					break;
@@ -54,7 +62,9 @@ export default class Message {
 					this.guild = client.guilds.get(data.guild_id)!;
 
 					//TODO Find out if this is actually necessary (probs not idk)
-					this.channel.guild = this.guild;
+					client.guilds
+						.get(data.guild_id)!
+						.channels.get(data.channel_id)!.guild = this.guild;
 					break;
 				}
 				case "channel_id": {
@@ -69,9 +79,10 @@ export default class Message {
 						if (guild) {
 							this.guild = guild!;
 							this.channel = <TextChannel>guild.channels.get(data.channel_id);
-						} else {
-							this.channel = new TextChannel(this.guild, data);
 						}
+						//@ts-ignore
+						//TODO This should be a guild, why are we passing a guild?
+						else this.channel = new TextChannel(this.guild, data);
 					}
 					break;
 				}

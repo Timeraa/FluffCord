@@ -1,15 +1,15 @@
-import User from "./User.ts";
-import Guild from "./Guild.ts";
+import { User, Guild } from "../mod.ts";
 
-export default class Emoji {
-	id: null | string;
-	name: null | string;
-	roles: string[];
+export class Emoji {
+	id: null | string = null;
+	name: null | string = null;
+	roles: string[] = [];
+	//@ts-ignore
 	user: User;
-	require_colons: boolean;
-	managed: boolean;
-	animated: boolean;
-	available: boolean;
+	require_colons = false;
+	managed = false;
+	animated = false;
+	available = false;
 
 	constructor(guild: Guild, data: any) {
 		const keys = Object.keys(data);

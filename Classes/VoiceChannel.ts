@@ -1,10 +1,8 @@
-import Client from "../Client.ts";
-import Guild from "./Guild.ts";
-import GuildChannel from "./GuildChannel.ts";
+import { Guild, GuildChannel } from "../mod.ts";
 
-export default class VoiceChannel extends GuildChannel {
-	bitrate: number;
-	user_limit: number;
+export class VoiceChannel extends GuildChannel {
+	bitrate = 0;
+	user_limit = 0;
 
 	constructor(guild: Guild, data: any) {
 		super(guild, data);

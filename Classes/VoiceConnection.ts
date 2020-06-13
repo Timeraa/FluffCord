@@ -1,28 +1,30 @@
-import GatewayPayload from "../@types/GatewayPayload.ts";
-import Guild from "./Guild.ts";
-import VoiceState from "./VoiceState.ts";
+import { GatewayPayload, VoiceState } from "../mod.ts";
 import {
 	connectWebSocket,
 	isWebSocketCloseEvent,
-	WebSocket,
-	WebSocketCloseEvent
+	WebSocket
 } from "https://deno.land/std/ws/mod.ts";
 
-export default class VoiceConnection {
+export class VoiceConnection {
+	//@ts-ignore
 	ws: WebSocket;
 	// udpSock: Deno.Listener;
-	endpoint: string;
-	token: string;
-	private secretKey: number[];
-	private udpIp: string;
-	private udpPort: number;
-	private userUDPAddr: string;
-	private userUDPPort: number;
+	endpoint = "";
+	token = "";
+	private secretKey: number[] = [];
+	private udpIp = "";
+	private udpPort = 0;
+	private userUDPAddr = "";
+	private userUDPPort = 0;
+	//@ts-ignore
 	private resolve: Function;
+	//@ts-ignore
 	private reject: Function;
-	private interval: number;
+	private interval = 0;
+	//@ts-ignore
 	private state: VoiceState;
 	private data: any;
+
 	async connect(state: VoiceState, data: any) {
 		this.state = state;
 		this.data = data;

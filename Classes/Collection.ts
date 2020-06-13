@@ -1,4 +1,4 @@
-export default class Collection<K, V> extends Map<K, V> {
+export class Collection<K, V> extends Map<K, V> {
 	array(): V[] {
 		return [...this.values()];
 	}

@@ -1,9 +1,6 @@
-import Client from "../Client.ts";
-import Guild from "./Guild.ts";
-import Role from "./Role.ts";
-import User from "./User.ts";
+import { Client, User, Role, Guild } from "../mod.ts";
 
-export default class GuildMember {
+export class GuildMember {
 	user: User;
 	nick: null | string;
 	roles: Role[];

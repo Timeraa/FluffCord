@@ -8,3 +8,4 @@ Discord API Wrapper for deno.
 
 - Set a max cache length for messages etc.
 - .test.ts files
+- Get rid of `--allow-read` permission by not walking the handlers

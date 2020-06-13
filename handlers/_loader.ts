@@ -1,10 +1,10 @@
-import Client from "../Client.ts";
-import Collection from "../Classes/Collection.ts";
-import GatewayPayload from "../@types/GatewayPayload.ts";
+import { Client } from "../Client.ts";
+import { Collection } from "../Classes/Collection.ts";
+import { GatewayPayload } from "../@types/GatewayPayload.ts";
 import { walk } from "https://deno.land/std/fs/walk.ts";
 import { cyan, rgb24 } from "https://deno.land/std/fmt/colors.ts";
 
-export default class EventHandler {
+export class EventHandler {
 	private handlers: Collection<String, Function> = new Collection();
 	constructor(public client: Client) {}
 

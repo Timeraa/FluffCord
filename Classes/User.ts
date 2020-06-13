@@ -1,14 +1,13 @@
-import Client from "../Client.ts";
-import TextChannel from "./TextChannel.ts";
+import { Client, TextChannel } from "../mod.ts";
 
-export default class User {
-	id: string;
-	username: string;
-	discriminator: string;
-	avatar?: string;
-	bot: boolean = false;
-	flags?: number = 0;
-	public_flags: number = 0;
+export class User {
+	id = "";
+	username = "";
+	discriminator = "";
+	avatar? = "";
+	bot = false;
+	flags? = 0;
+	public_flags = 0;
 	dmChannel: TextChannel | null = null;
 
 	constructor(private client: Client, data: any) {

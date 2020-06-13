@@ -1,4 +1,4 @@
-export default interface ClientOptions {
+export interface ClientOptions {
 	/**
 	 * Discord Bot token
 	 */

@@ -1,72 +1,78 @@
-import Client from "../Client.ts";
-import Collection from "./Collection.ts";
-import Emoji from "./Emoji.ts";
-import GuildChannel from "./GuildChannel.ts";
-import GuildMember from "./GuildMember.ts";
-import Message from "./Message.ts";
-import Role from "./Role.ts";
-import TextChannel from "./TextChannel.ts";
-import VoiceChannel from "./VoiceChannel.ts";
-import VoiceConnection from "./VoiceConnection.ts";
-import VoiceState from "./VoiceState.ts";
+import {
+	Client,
+	Collection,
+	Role,
+	VoiceState,
+	GuildMember,
+	Emoji,
+	TextChannel,
+	VoiceChannel,
+	GuildChannel,
+	VoiceConnection,
+	Message
+} from "../mod.ts";
 
 export interface UnavailableGuild {
 	id: string;
 	unavailable: boolean;
 }
 
-export default class Guild {
+export class Guild {
+	//@ts-ignore
 	client: Client;
-	id: string;
-	name: string;
-	icon: null | string;
-	splash: null | string;
-	discovery_splash: null | string;
+	id = "";
+	name = "";
+	icon: null | string = null;
+	splash: null | string = null;
+	discovery_splash: null | string = null;
+	//@ts-ignore
 	owner: GuildMember;
-	owner_id: string;
-	permissions: number;
-	region: string;
-	afk_channel_id: string;
-	afk_timeout: number;
-	embed_enabled: boolean;
-	embed_channel_id: string;
-	verification_level: number;
-	default_message_notification: number;
-	explicit_content_filter: number;
+	owner_id = "";
+	permissions = 0;
+	region = "";
+	afk_channel_id = "";
+	afk_timeout = 0;
+	embed_enabled = false;
+	embed_channel_id = "";
+	verification_level = 0;
+	default_message_notification = 0;
+	explicit_content_filter = 0;
 	roles: Collection<string, Role> = new Collection();
-	emojis: Emoji[];
-	features: string[];
-	mfa_level: 0 | 1;
-	application_id: string;
-	widget_enabled: boolean;
-	widget_channel_id: string;
-	system_channel_id: string;
-	system_channel_flags: number;
-	joined_at: Date;
-	large: boolean;
-	unavailable: boolean;
-	member_count: number;
+	emojis: Emoji[] = [];
+	features: string[] = [];
+	mfa_level: 0 | 1 = 0;
+	application_id = "";
+	widget_enabled = false;
+	widget_channel_id = "";
+	system_channel_id = "";
+	system_channel_flags = 0;
+	//TODO Date.now instead
+	joined_at = new Date();
+	large = false;
+	unavailable = true;
+	member_count = 0;
 	voice_states: Collection<string, VoiceState> = new Collection();
 	members: Collection<string, GuildMember> = new Collection();
 	channels: Collection<
 		string,
 		GuildChannel | TextChannel | TextChannel | VoiceChannel
 	> = new Collection();
+	//TODO Shouldn't this be an array?
 	presences: any;
-	max_presences: number;
-	max_members: number;
-	vanity_url_code: string;
-	description: string;
-	banner: string;
-	premium_tier: number;
-	premium_subscription_count: number;
-	preferred_locale: string;
-	public_updates_channel_id: string;
-	max_video_channel_users: number;
-	approximate_member_count: number;
-	approximate_presence_count: null | number;
+	max_presences = 0;
+	max_members = 0;
+	vanity_url_code = "";
+	description = "";
+	banner = "";
+	premium_tier = 0;
+	premium_subscription_count = 0;
+	preferred_locale = "";
+	public_updates_channel_id = "";
+	max_video_channel_users = 0;
+	approximate_member_count = 0;
+	approximate_presence_count: null | number = null;
 	messageCache: Collection<string, Message> = new Collection();
-	voiceConnection: VoiceConnection;
+	voiceConnection: null | VoiceConnection = null;
 
 	constructor(client: Client, guild: any) {
 		this.client = client;

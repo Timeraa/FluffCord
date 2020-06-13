@@ -1,13 +1,14 @@
-import Guild from "./Guild.ts";
-import Client from "../Client.ts";
+import { Guild, Client } from "../mod.ts";
 
-export default class GuildChannel {
+export class GuildChannel {
+	//@ts-ignore
 	client: Client;
-	id: string;
-	type: number;
-	position: number;
-	permission_overwrites: any;
-	name: string;
+	id = "";
+	type = 0;
+	position = 0;
+	permission_overwrites: any = null;
+	name = "";
+	//@ts-ignore
 	guild: Guild;
 
 	constructor(guild: Guild, data: any) {

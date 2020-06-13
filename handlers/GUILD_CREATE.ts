@@ -1,5 +1,4 @@
-import Client from "../Client.ts";
-import Guild from "../Classes/Guild.ts";
+import { Client, Guild } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	const guild = new Guild(this, data);

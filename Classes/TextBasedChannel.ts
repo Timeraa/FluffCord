@@ -1,9 +1,7 @@
-import GuildChannel from "./GuildChannel.ts";
-import Message from "./Message.ts";
-import Guild from "./Guild.ts";
+import { GuildChannel, Guild, Message } from "../mod.ts";
 
-export default class TextBasedChannel extends GuildChannel {
-	private typingInterval: number;
+export class TextBasedChannel extends GuildChannel {
+	private typingInterval = 0;
 	private typingCounts = 0;
 
 	constructor(guild: Guild, data: any) {

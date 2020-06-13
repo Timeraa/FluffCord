@@ -1,6 +1,4 @@
-import Client from "../Client.ts";
-import Reaction from "../Classes/Reaction.ts";
-import TextChannel from "../Classes/TextChannel.ts";
+import { Client, Reaction, TextChannel } from "../mod.ts";
 
 export default async function (this: Client, data: any) {
 	//TODO DM Handling

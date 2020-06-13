@@ -1,17 +1,17 @@
-import Client from "../Client.ts";
+import { Client } from "../mod.ts";
 
-export default class VoiceState {
-	guild_id: string;
-	channel_id: string;
-	user_id: string;
-	session_id: string;
-	deaf: boolean;
-	mute: boolean;
-	self_deaf: boolean;
-	self_mute: boolean;
-	self_stream?: boolean = false;
-	self_video: boolean;
-	suppress: boolean;
+export class VoiceState {
+	guild_id = "";
+	channel_id = "";
+	user_id = "";
+	session_id = "";
+	deaf = false;
+	mute = false;
+	self_deaf = false;
+	self_mute = false;
+	self_stream? = false;
+	self_video = false;
+	suppress = false;
 	constructor(public client: Client, data: any) {
 		for (const key of Object.keys(data)) {
 			if (["member"].includes(key)) continue;

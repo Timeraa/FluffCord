@@ -1,5 +1,4 @@
-import Client from "../Client.ts";
-import VoiceState from "../Classes/VoiceState.ts";
+import { Client, VoiceState } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	const guild = this.guilds.get(data.guild_id);

@@ -1,4 +1,4 @@
-import Client from "../Client.ts";
+import { Client } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	if (!this.guilds.has(data.id)) return;

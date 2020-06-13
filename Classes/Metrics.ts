@@ -1,6 +1,6 @@
-import Collection from "./Collection.ts";
+import { Collection } from "../mod.ts";
 
-export default class Metrics {
+export class Metrics {
 	private receivedEvents: Collection<string, number> = new Collection();
 	private requests: Collection<string, number> = new Collection();
 	private failedRequests: Collection<string, number> = new Collection();

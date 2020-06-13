@@ -1,5 +1,4 @@
-import Client from "../Client.ts";
-import TextChannel from "../Classes/TextChannel.ts";
+import { Client } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	//TODO Return dm channel

@@ -1,4 +1,4 @@
-export default interface GatewayPayload {
+export interface GatewayPayload {
 	op: number;
 	d?: any;
 	s?: number;

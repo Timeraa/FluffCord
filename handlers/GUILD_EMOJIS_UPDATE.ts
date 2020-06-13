@@ -1,6 +1,4 @@
-import Client from "../Client.ts";
-import Emoji from "../Classes/Emoji.ts";
-import Guild from "../Classes/Guild.ts";
+import { Client, Emoji } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	const guild = this.guilds.get(data.guild_id)!;

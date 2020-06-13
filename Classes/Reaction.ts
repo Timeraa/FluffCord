@@ -1,12 +1,11 @@
-import Emoji from "./Emoji.ts";
-import User from "./User.ts";
-import GuildMember from "./GuildMember.ts";
-import Guild from "./Guild.ts";
+import { Emoji, Guild, GuildMember, User } from "../mod.ts";
 
-export default class Reaction {
+export class Reaction {
 	count = 0;
 	me = false;
+	//@ts-ignore
 	emoji: Emoji;
+	//@ts-ignore
 	user: User;
 	member?: GuildMember;
 

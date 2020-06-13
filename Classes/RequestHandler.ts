@@ -1,12 +1,11 @@
-import Client from "../Client.ts";
-import Collection from "./Collection.ts";
+import { Client, Collection } from "../mod.ts";
 import { red, cyan, magenta } from "https://deno.land/std/fmt/colors.ts";
 import ShortUniqueId from "https://deno.land/x/short_uuid/mod.ts";
 import axiod from "https://deno.land/x/axiod/mod.ts";
 const uid = new ShortUniqueId();
 
 //TODO Handle Global Ratelimit
-export default class RequestHandler {
+export class RequestHandler {
 	client: Client;
 	currentGlobalRateLimit = 0;
 	routeLimitReset: Collection<string, any> = new Collection();

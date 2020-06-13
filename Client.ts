@@ -1,11 +1,11 @@
-import ClientOptions from "./@types/ClientOptions.ts";
-import Collection from "./Classes/Collection.ts";
-import EventHandler from "./handlers/_loader.ts";
-import GatewayPayload from "./@types/GatewayPayload.ts";
-import Guild, { UnavailableGuild } from "./Classes/Guild.ts";
-import Metrics from "./Classes/Metrics.ts";
-import RequestHandler from "./Classes/RequestHandler.ts";
-import User from "./Classes/User.ts";
+import { ClientOptions } from "./@types/ClientOptions.ts";
+import { Collection } from "./Classes/Collection.ts";
+import { EventHandler } from "./handlers/_loader.ts";
+import { GatewayPayload } from "./@types/GatewayPayload.ts";
+import { Guild, UnavailableGuild } from "./Classes/Guild.ts";
+import { Metrics } from "./Classes/Metrics.ts";
+import { RequestHandler } from "./Classes/RequestHandler.ts";
+import { User } from "./Classes/User.ts";
 import { DISCORD_GATEWAY_URL } from "./constants.ts";
 
 import {
@@ -18,7 +18,7 @@ import * as colors from "https://deno.land/std/fmt/colors.ts";
 import EventEmitter from "https://deno.land/x/events/mod.ts";
 import { process } from "https://deno.land/std/node/process.ts";
 
-export default class Client extends EventEmitter {
+export class Client extends EventEmitter {
 	ws: WebSocket | null = null;
 	unavailableGuilds: UnavailableGuild[] = [];
 	sessionId: string | null = null;

@@ -1,12 +1,12 @@
-export default class Role {
-	id: string;
-	name: string;
-	color: number;
-	hoist: boolean;
-	position: number;
-	private bitSet: number;
-	managed: boolean;
-	mentionable: boolean;
+export class Role {
+	id = "";
+	name = "";
+	color = 0;
+	hoist = false;
+	position = 0;
+	private bitSet = 0;
+	managed = false;
+	mentionable = false;
 
 	constructor(data: any) {
 		const roleKeys = Object.keys(data);

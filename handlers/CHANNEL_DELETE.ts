@@ -1,11 +1,10 @@
-import Client from "../Client.ts";
-import Guild from "../Classes/Guild.ts";
+import { Client } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	this.emit(
 		"channelDelete",
-		(this.guilds.get(data.guild_id) as Guild).channels.get(data.id)
+		this.guilds.get(data.guild_id)!.channels.get(data.id)
 	);
 
-	(this.guilds.get(data.guild_id) as Guild).channels.delete(data.id);
+	this.guilds.get(data.guild_id)!.channels.delete(data.id);
 }

@@ -1,5 +1,4 @@
-import Client from "../Client.ts";
-import Message from "../Classes/Message.ts";
+import { Client, Message } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	const message = new Message(this, data);

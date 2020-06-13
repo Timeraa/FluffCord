@@ -1,7 +1,4 @@
-import Client from "../Client.ts";
-import GuildChannel from "../Classes/GuildChannel.ts";
-import TextChannel from "../Classes/TextChannel.ts";
-import VoiceChannel from "../Classes/VoiceChannel.ts";
+import { Client, TextChannel, GuildChannel, VoiceChannel } from "../mod.ts";
 
 export default function (this: Client, data: any) {
 	let channel: TextChannel | GuildChannel;
