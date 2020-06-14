@@ -1,18 +1,18 @@
 export interface ClientOptions {
-	/**
+  /**
 	 * Discord Bot token
 	 */
-	token: string;
-	/**
+  token: string;
+  /**
 	 * Whether to log debug events
 	 */
-	debug?: boolean;
-	/**
+  debug?: boolean;
+  /**
 	 * Whether to log all requests
 	 */
-	debugRequests?: boolean;
-	/**
+  debugRequests?: boolean;
+  /**
 	 * Dispatch events to ignore
 	 */
-	omittedDebugEvents?: string[];
+  omittedDebugEvents?: string[];
 }

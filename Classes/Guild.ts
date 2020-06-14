@@ -17,6 +17,14 @@ export interface UnavailableGuild {
 	unavailable: boolean;
 }
 
+export enum ChannelType {
+	TEXT = 0,
+	VOICE = 2,
+	CATEGORY = 4,
+	NEWS = 5,
+	STORE = 6
+}
+
 export class Guild {
 	//@ts-ignore
 	client: Client;
@@ -137,6 +145,44 @@ export class Guild {
 					break;
 			}
 		}
+	}
+
+	async createChannel(options: {
+		name: string;
+		type?: ChannelType;
+		topic?: string;
+		bitrate?: number;
+		user_limit?: number;
+		rate_limit_per_user?: number;
+		position?: number;
+		permission_overwrites?: any;
+		parent_id?: string;
+		nsfw?: boolean;
+	}) {
+		return this.client
+			.request(`guilds/${this.id}/channels`, "POST", options)
+			.then(channel => {
+				switch (channel.type) {
+					case 0:
+						return new TextChannel(this, channel);
+					case 2:
+						return new VoiceChannel(this, channel);
+					/*					case 4:
+				guildChannels.set(data.id, new CategoryChannel(data));
+				break;
+				case 5:
+					guildChannels.set(data.id, new NewsChannel(data));
+					break;
+					case 6:
+						guildChannels.set(data.id, new StoreChannel(data));
+						break; */
+					default:
+						return new GuildChannel(this, channel);
+				}
+			})
+			.catch(err => {
+				throw `${err.code} - ${err.message}`;
+			});
 	}
 
 	async joinChannel(

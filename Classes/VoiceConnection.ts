@@ -8,7 +8,7 @@ import {
 export class VoiceConnection {
 	//@ts-ignore
 	ws: WebSocket;
-	// udpSock: Deno.Listener;
+	udpSock: Deno.Listener | null = null;
 	endpoint = "";
 	token = "";
 	private secretKey: number[] = [];
@@ -69,17 +69,16 @@ export class VoiceConnection {
 				);
 				break;
 			}
-			// case 2: {
-			// 	// @ts-ignore
-			// 	this.udpSock = Deno.listen({
-			// 		hostname: "golang.org",
-			// 		port: 80,
-			// 		// @ts-ignore
-			// 		transport: "udp"
-			// 	});
-			// 	for await (const m of this.udpSock) console.log(m);
-			// 	console.log(this.udpSock);
-			// }
+			case 2: {
+				// @ts-ignore
+				this.udpSock = await Deno.connect({
+					hostname: payload.d.ip,
+					port: payload.d.port,
+					// @ts-ignore
+					transport: "tcp"
+				});
+				console.log(this.udpSock!);
+			}
 		}
 	}
 }

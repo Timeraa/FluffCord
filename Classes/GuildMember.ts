@@ -1,4 +1,4 @@
-import { Client, User, Role, Guild } from "../mod.ts";
+import { Client, User, Role, Guild, Permissions } from "../mod.ts";
 
 export class GuildMember {
 	user: User;
@@ -10,7 +10,7 @@ export class GuildMember {
 	mute: boolean;
 	deaf: boolean;
 
-	constructor(client: Client, guild: Guild, member: any) {
+	constructor(client: Client, public guild: Guild, member: any) {
 		this.user = new User(client, member.user);
 		this.roles = member.roles.map((r: string) => guild.roles.get(r));
 		this.nick = member.nick || null;
@@ -21,5 +21,9 @@ export class GuildMember {
 		this.hoisted_role = guild.roles.get(member.hoisted_role)!;
 		this.deaf = member.deaf;
 		this.mute = member.mute;
+	}
+
+	get permissions() {
+		return new Permissions(this.guild, null, null, this);
 	}
 }

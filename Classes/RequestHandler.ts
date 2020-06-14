@@ -1,7 +1,7 @@
 import { Client, Collection } from "../mod.ts";
 import { red, cyan, magenta } from "https://deno.land/std/fmt/colors.ts";
 import ShortUniqueId from "https://deno.land/x/short_uuid/mod.ts";
-import axiod from "https://deno.land/x/axiod/mod.ts";
+import { DISCORD_API_BASE } from "../constants.ts";
 const uid = new ShortUniqueId();
 
 //TODO Handle Global Ratelimit
@@ -58,22 +58,16 @@ export class RequestHandler {
 			};
 
 			if (data.body === null) delete data.body;
-			if (this.client.options.debugRequests)
+			else data.body = JSON.stringify(data.body);
+			if (this.client.options.debugRequests) {
 				// @ts-ignore
 				this.client.debugLog(
 					`${magenta(method)} ${cyan(path.startsWith("/") ? path : `/${path}`)}`
 				);
+			}
 
 			const start = performance.now(),
-				res = await axiod(path, {
-					baseURL: "https://discord.com/api/v6/",
-					method,
-					data: body,
-					headers: {
-						Authorization: `Bot ${this.client.options.token}`,
-						"Content-Type": "application/json"
-					}
-				}).catch(e => e.response);
+				res = await fetch(DISCORD_API_BASE + path, data);
 			this.client.metrics.addResponseTime(performance.now() - start);
 
 			//* Too many requests
@@ -105,10 +99,10 @@ export class RequestHandler {
 
 			pendingRequests = this.pendingRequests.get(path) || [];
 
-			const response = res.status !== 204 ? res.data : null,
+			const response = res.status !== 204 ? await res.json() : null,
 				request = pendingRequests.find(pR => pR.id === requestId);
 
-			if (res.status < 200 || res.status > 299) {
+			if (!res.ok) {
 				this.client.metrics.putFailedRequest(
 					path.startsWith("/") ? path : `/${path}`
 				);

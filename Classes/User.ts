@@ -37,12 +37,19 @@ export class User {
 		return ch.send(content);
 	}
 
-	//TODO
-	avatarURL(options?: {
-		format?: "webp" | "png" | "jpg" | "jpeg" | "gif";
-		dynamic?: boolean;
-		size?: 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
-	}) {}
+	avatarURL(
+		options: {
+			format?: "webp" | "png" | "jpg" | "jpeg" | "gif";
+			dynamic?: boolean;
+			size?: 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
+		} = { dynamic: true, format: "png" }
+	) {
+		return `https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}${
+			this.avatar?.startsWith("a_") && options.dynamic
+				? ".gif"
+				: "." + options.format
+		}${options.size ? "?size=" + options.size : ""}`;
+	}
 
 	toString() {
 		return `<@${this.id}>`;

@@ -83,4 +83,13 @@ export class TextBasedChannel extends GuildChannel {
 				throw `${err.code} - ${err.message}`;
 			});
 	}
+
+	async fetchPinnedMessages() {
+		return this.client
+			.request(`channels/${this.id}/pins`, "GET")
+			.then((msgs: []) => msgs.map((m: any) => new Message(this.client, m)))
+			.catch(err => {
+				throw `${err.code} - ${err.message}`;
+			});
+	}
 }

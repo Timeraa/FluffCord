@@ -169,4 +169,20 @@ export class Message {
 				throw `${err.code} - ${err.message}`;
 			});
 	}
+
+	async pin(): Promise<void> {
+		return this.client
+			.request(`channels/${this.channel.id}/pins/${this.id}`, "PUT")
+			.catch(err => {
+				throw `${err.code} - ${err.message}`;
+			});
+	}
+
+	async unpin(): Promise<void> {
+		return this.client
+			.request(`channels/${this.channel.id}/pins/${this.id}`, "DELETE")
+			.catch(err => {
+				throw `${err.code} - ${err.message}`;
+			});
+	}
 }

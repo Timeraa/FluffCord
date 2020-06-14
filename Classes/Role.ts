@@ -1,10 +1,12 @@
+import { Permissions } from "../mod.ts";
+
 export class Role {
 	id = "";
 	name = "";
 	color = 0;
 	hoist = false;
 	position = 0;
-	private bitSet = 0;
+	bitSet = 0;
 	managed = false;
 	mentionable = false;
 
@@ -18,6 +20,6 @@ export class Role {
 
 	// TODO: Role permissions
 	get permissions() {
-		return null;
+		return new Permissions(null, this);
 	}
 }

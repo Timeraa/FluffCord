@@ -1,4 +1,11 @@
-import { Guild, Client } from "../mod.ts";
+import {
+	Guild,
+	Client,
+	PermissionOverwrite,
+	Permissions,
+	GuildMember,
+	Invite
+} from "../mod.ts";
 
 export class GuildChannel {
 	//@ts-ignore
@@ -6,7 +13,7 @@ export class GuildChannel {
 	id = "";
 	type = 0;
 	position = 0;
-	permission_overwrites: any = null;
+	permission_overwrites: PermissionOverwrite[] = [];
 	name = "";
 	//@ts-ignore
 	guild: Guild;
@@ -28,5 +35,31 @@ export class GuildChannel {
 					break;
 			}
 		}
+	}
+
+	async createInvite(
+		options: {
+			max_age: number;
+			max_uses: number;
+			temporary: boolean;
+			unique: boolean;
+		} = { max_age: 86400, max_uses: 0, temporary: false, unique: false }
+	) {
+		return this.client
+			.request(`channels/${this.id}/invites`, "POST", options)
+			.then(data => new Invite(this.client, data))
+			.catch(err => {
+				throw `${err.code} - ${err.message}`;
+			});
+	}
+
+	async delete() {
+		return this.client.request(`channels/${this.id}`, "DELETE").catch(err => {
+			throw `${err.code} - ${err.message}`;
+		});
+	}
+
+	permissionsFor(member: GuildMember) {
+		return new Permissions(this.guild, null, this, member);
 	}
 }
