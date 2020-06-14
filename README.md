@@ -41,4 +41,7 @@ client.on("messageCreate", async (message: Message) => {
 		return;
 	}
 });
+
+// Login Client
+await client.login();
 ```
