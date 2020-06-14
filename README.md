@@ -22,7 +22,7 @@ const client = new Client({
 });
 
 // Listening to events
-client.on("messageCreate", async (message: Message) => {
+client.on("messageCreate", async (msg: Message) => {
 	// Ignore bot messages
 	if (msg.author.bot) return;
 
