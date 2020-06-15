@@ -1,4 +1,4 @@
-import { Permissions } from "../mod.ts";
+import { Permissions, Guild } from "../mod.ts";
 
 export class Role {
 	id = "";
@@ -9,12 +9,22 @@ export class Role {
 	bitSet = 0;
 	managed = false;
 	mentionable = false;
+	guild: Guild;
 
-	constructor(data: any) {
-		const roleKeys = Object.keys(data);
-		for (let i = 0; i < roleKeys.length; i++) {
-			if (roleKeys[i] === "permissions") this.bitSet = data.permissions;
-			Reflect.set(this, roleKeys[i], data[roleKeys[i]]);
+	constructor(guild: Guild, data: any) {
+		this.guild = guild;
+
+		const keys = Object.keys(data);
+
+		for (let i = 0; i < keys.length; i++) {
+			switch (keys[i]) {
+				case "permissions":
+					this.bitSet = data.permissions;
+					break;
+				default:
+					Reflect.set(this, keys[i], data[keys[i]]);
+					break;
+			}
 		}
 	}
 

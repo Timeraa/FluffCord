@@ -3,7 +3,7 @@ import { Client, User, Role, Guild, Permissions } from "../mod.ts";
 export class GuildMember {
 	user: User;
 	nick: null | string;
-	roles: Role[];
+	roles: Role[] = [];
 	joined_at: Date;
 	premium_since: null | number;
 	hoisted_role: Role;

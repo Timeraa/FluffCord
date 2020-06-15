@@ -125,7 +125,9 @@ export class Guild {
 					});
 					break;
 				case "roles":
-					guild.roles.forEach((x: any) => this.roles.set(x.id, new Role(x)));
+					guild.roles.forEach((x: any) =>
+						this.roles.set(x.id, new Role(guild, x))
+					);
 					break;
 				case "members":
 					guild.members.forEach((x: any) =>

@@ -1,9 +1,9 @@
 import { Client, Role } from "../mod.ts";
 
 export default function (this: Client, data: any) {
-	const role = new Role(data.role);
+	const role = new Role(this.guilds.get(data.guild_id)!, data.role);
 
 	this.guilds.get(data.guild_id)!.roles.set(role.id, role);
 
-	this.emit("roleCreate", role);
+	this.emit("guildRoleCreate", role);
 }

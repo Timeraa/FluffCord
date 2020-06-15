@@ -76,17 +76,7 @@ export class Client extends EventEmitter {
 				} else if (isWebSocketCloseEvent(message)) {
 					this.ready = false;
 					this.connected = false;
-					this.debugLog(
-						colors.red(message.code.toString() + (message.reason || "N/A"))
-					);
-					if (!this.sessionId)
-						reject("Server closed connection before client was ready!");
-					else
-						reject(
-							`Server closed connection unexpectedly (${message.code}, ${
-								message.reason || "N/A"
-							})`
-						);
+					this.handleDisconnect(message, reject);
 				}
 			}
 		});
@@ -166,13 +156,89 @@ export class Client extends EventEmitter {
 				);
 				break;
 			}
+			//* Reconnect
+			case 7: {
+				if (payload.d) {
+					this.resume();
+				} else {
+					this.reconnect();
+				}
+			}
 		}
 	}
 
-	private handleDisconnect(message: WebSocketCloseEvent) {
-		this.debugLog(
-			colors.red(message.code.toString() + (message.reason || "N/A"))
+	private handleDisconnect(
+		message: WebSocketCloseEvent,
+		reject: (reason?: any) => void
+	) {
+		switch (message.code) {
+			//* Custom discord close codes
+			case 4003:
+				return reject(
+					"A payload was sent before the client could successfully identify!"
+				);
+			case 4004:
+				return reject("Invalid token provided!");
+			case 4005:
+				return reject(
+					"We've already sent an identify payload! Did you send another one?"
+				);
+			case 4008:
+			case 4009:
+				return this.reconnect();
+			case 4011:
+				return reject(
+					"This client would have been handling too many guilds! Please increase the shard limit!"
+				);
+			case 4013:
+				return reject("An invalid intent was provided");
+			case 4014:
+				return reject(
+					"You specified an intent in which your client doesn't have access to!"
+				);
+			//* Standard close codes
+			case 1000:
+				return this.emit("disconnect", 1000, "Normal closure");
+			case 1005:
+				return this.emit("disconnect", 1005, "No status received");
+			case 1006:
+				return this.emit(
+					"disconnect",
+					1006,
+					"Connection reset on behalf of server"
+				);
+			default:
+				return this.emit("disconnect", message.code, message.reason || "N/A");
+		}
+	}
+
+	private resume() {
+		this.debugLog(`Client is resuming with sequence ${this.seq}...`);
+		this.emit("resuming");
+		this.ws?.send(
+			JSON.stringify({
+				op: 6,
+				d: {
+					token: this.options.token,
+					session_id: this.sessionId,
+					seq: this.seq
+				}
+			})
 		);
+	}
+
+	private reconnect() {
+		this.debugLog("Client is reconnecting...");
+		this.emit("reconnecting");
+		this.guilds.clear();
+		this.seq = 0;
+		clearInterval(this.interval);
+		this.lastHeartbeat = -1;
+		this.lastHeartbeatAck = -1;
+		this.unavailableGuilds = [];
+		this.sessionId = null;
+		this.ws?.close();
+		this.identify();
 	}
 
 	get ping() {
