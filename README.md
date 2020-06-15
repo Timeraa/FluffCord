@@ -9,6 +9,7 @@ Discord API Wrapper for deno.
 - Set a max cache length for messages etc.
 - .test.ts files
 - better README
+- `client.on` does not have types as we extend a prebuilt emitter
 
 # Example
 
