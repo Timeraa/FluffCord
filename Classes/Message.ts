@@ -5,7 +5,8 @@ import {
 	GuildMember,
 	Guild,
 	User,
-	TextChannel
+	TextChannel,
+	MessageEmbed
 } from "../mod.ts";
 
 export class Message {
@@ -141,17 +142,22 @@ export class Message {
 	}
 
 	async edit(
-		content: string,
+		content: string | MessageEmbed,
 		options: {
 			tts?: boolean;
 			embed?: any;
 		} = {
 			tts: false,
-			embed: null
+			embed: MessageEmbed
 		}
 	): Promise<Message> {
 		const tts = options.tts,
-			embed = options.embed;
+			embed =
+				typeof content !== "string"
+					? content.embed
+					: null || options.embed?.embed;
+
+		if (typeof content !== "string") content = "";
 
 		return this.client
 			.request(`channels/${this.channel.id}/messages/${this.id}`, "PATCH", {
