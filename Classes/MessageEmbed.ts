@@ -1,10 +1,12 @@
+import { resolveColor } from "../util/resolveColor.ts";
+
 export interface Embed {
 	title?: string;
 	type?: "rich" | "image" | "video" | "gifv" | "article" | "link";
 	description?: string;
 	url?: string;
 	timestamp?: number;
-	color?: number;
+	color?: string | number;
 	footer?: {
 		text: string;
 		icon_url?: string;
@@ -44,9 +46,11 @@ export interface Embed {
 	}[];
 }
 
-export class EmbedBuilder {
+export class MessageEmbed {
 	public embed: Embed;
 	constructor(embed?: Embed) {
+		if (embed?.color) embed.color = resolveColor(embed.color);
+
 		if (embed) {
 			if (!embed.fields) embed.fields = [];
 			if (embed.type && embed.type !== "rich")
@@ -80,7 +84,7 @@ export class EmbedBuilder {
 		return this;
 	}
 	setColor(color: number) {
-		this.embed.color = color;
+		this.embed.color = resolveColor(color);
 	}
 	setFooter(text: string, icon_url?: string, proxy_icon_url?: string) {
 		if (text.length > 2048)

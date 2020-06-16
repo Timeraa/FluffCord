@@ -1,4 +1,4 @@
-import { GuildChannel, Guild, Message } from "../mod.ts";
+import { GuildChannel, Guild, Message, MessageEmbed } from "../mod.ts";
 
 export class TextBasedChannel extends GuildChannel {
 	private typingInterval = 0;
@@ -9,17 +9,22 @@ export class TextBasedChannel extends GuildChannel {
 	}
 
 	async send(
-		content: string,
+		content: string | MessageEmbed,
 		options: {
 			tts?: boolean;
-			embed?: any;
+			embed?: MessageEmbed | null;
 		} = {
 			tts: false,
 			embed: null
 		}
 	) {
 		const tts = options.tts,
-			embed = options.embed;
+			embed =
+				typeof content !== "string"
+					? content.embed
+					: null || options.embed?.embed;
+
+		if (typeof content !== "string") content = "";
 
 		return this.client
 			.request(`channels/${this.id}/messages`, "POST", {

@@ -20,4 +20,4 @@ export * from "./Classes/VoiceChannel.ts";
 export * from "./Classes/VoiceConnection.ts";
 export * from "./Classes/VoiceState.ts";
 export * from "./Classes/Permissions.ts";
-export * from "./Classes/EmbedBuilder.ts";
+export * from "./Classes/MessageEmbed.ts";
