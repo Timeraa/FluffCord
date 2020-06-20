@@ -53,7 +53,8 @@ export class RequestHandler {
 				method,
 				headers: new Headers({
 					Authorization: `Bot ${this.client.options.token}`,
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+					"X-RateLimit-Precision": "millisecond"
 				})
 			};
 
@@ -76,20 +77,16 @@ export class RequestHandler {
 					this.client.metrics.putFailedRequest(
 						path.startsWith("/") ? path : `/${path}`
 					);
+					const retryAfter =
+						Number(res.headers.get("X-RateLimit-Reset-After")!) * 1000;
+
 					// @ts-ignore
 					this.client.debugLog(
-						red(
-							`${method} ${path} hit ratelimit, retry in ${res.headers.get(
-								"X-RateLimit-Reset-After"
-							)} seconds.`
-						)
+						red(`${method} ${path} hit ratelimit, retry in ${retryAfter}ms.`)
 					);
 
 					this.routeLimitReset.set(path, {
-						timeout: setTimeout(
-							() => this.rateLimitExpired(path),
-							parseInt(res.headers.get("X-RateLimit-Reset-After")!) * 1000
-						),
+						timeout: setTimeout(() => this.rateLimitExpired(path), retryAfter),
 						limit: res.headers.get("X-RateLimit-Limit")
 					});
 				}
